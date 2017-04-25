@@ -5,7 +5,7 @@
 
 #guessValues() guesses and finds values based on input
 
-#generateValues() can generate multiple values within a range without hitting the same value combination twice, it can also start where it left off without having to recalculate its place
+#generateValues() can generate multiple values within a range without hitting the same value combination twice, it can also start where it left off without having to start from the first iteration
 
 import math
 
