@@ -7,7 +7,7 @@ def xCutsLine(x1Line, x2Line, y1Line, y2Line, xCutLocs):
 	
 	for cutLoc in xCutLocs:
 		xLine.append(cutLoc)
-		yLine.append(y1Line - (x1Line - cutLoc) / (x1Line - x2Line) * (y1Line - y2Line))
+		yLine.append(y1Line - float(x1Line - cutLoc) / float(x1Line - x2Line) * (y1Line - y2Line))
 	
 	return xLine, yLine
 
