@@ -12,3 +12,5 @@ These functions are demonstrated in the graph and graph3d folders.
 generateValues() can generate multiple values within a range without hitting the same value combination twice, it can also start where it left off without having to start from the first iteration  
 This function is demonstrated in the genValues folder.  
 ![all_combinations](https://github.com/lowlevel86/multiple-variable-trial-and-error/blob/master/all_combinations.png "outputValues.py")
+
+[paypal.me/CMogged](https://www.paypal.me/CMogged)
