@@ -8,4 +8,6 @@ void iniGuessValues(float *, float *, int, float *, float *, float *);
 
 void guessValues(float *, float *, int, float, int, float *, float *, float *);
 
-void generateValues(float *, float *, int, int, float *);
+void generateValuesA(int, float *, int);
+void generateValuesB(int, float *, int);
+void generateValuesC(float *, float *, int, float *, int);
