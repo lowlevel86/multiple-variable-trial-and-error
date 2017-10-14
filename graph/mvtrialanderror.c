@@ -146,324 +146,200 @@ void guessValues(float *topMostValueArray, float *bottomMostValueArray,
 	}
 }
 
-//return non-redundant combination pair from a single group
-void retSingleGroupPairCombination(int groupSize, int combInc, int *selectedPair)
+int retBaseNthDigit(int base, int num, int digitLoc)
 {
-   int combCnt;
-   int triangularRoot;
-   int resetCombInc;
+   int digit;
+   int upperDigits;
+   float placeValue1;
+   float placeValue2;
    
-	//get the number of pair combinations the group can have
-	combCnt = ((groupSize-1) * ((groupSize-1) + 1.0)) / 2.0; //get triangular number
+   placeValue1 = pow(base, digitLoc);
+   placeValue2 = placeValue1 * base;
    
-	//get the triangular root of "combInc (reversed)" to help find the combination order
-	triangularRoot = (int)((sqrt(8 * ((combCnt-1)-combInc) + 1.0) - 1.0) / 2.0);
-	
-	
-	//find the first number of the combination pair
-	selectedPair[0] = (int)((groupSize-1) - (triangularRoot+1));
-	
-	//use "resetCombInc" to subtract from combInc and put the combination in a sequential order
-	resetCombInc = (selectedPair[0] * (selectedPair[0] + 1.0)) / 2.0;
-	
-	//find the second number of the combination pair
-	selectedPair[1] = (int)((combInc - resetCombInc) % (triangularRoot+1) + selectedPair[0]+1);
+   //use integer division to remove smaller digits
+   upperDigits = num / (int)placeValue1;
+   
+   //subtract away the larger digits
+   digit = upperDigits - num / (int)placeValue2 * base;
+   
+   return digit;
 }
 
-//return non-redundant combination pair from 2 different groups and not from the same group
-void retDualGroupPairCombination(int groupSize, int combInc, int *selectedPair)
+void retSingleGroupComb(int evenGroupSize, int combInc, int valueArrayCnt, float *valueArray)
 {
-	//find the combination pair
-	selectedPair[0] = (int)(combInc / (groupSize+1));
-	selectedPair[1] = (int)(combInc % (groupSize+1));
-}
-
-void retPyramidPairValueCombination(int iteration, float *selectedPairValue)
-{
-   float triRoot;
-   int rev2Pow;
-   int revRev2PowInt;
-   float triNum, triNumLg, triNumSm;
-   int pyramidLayerInc;
-   int layerCombInc;
-   int layerCombCnt;
-   int layerCellCnt;
-   float layerCellCntHalf;
-   float layerCellCntFrac;
-   int singleGroupCombSize;
-   int dualGroupCombSize;
-   int dualGroupCombInc;
-   int singleGroupCombInc;
-   int selectedPair[2];
+   int i, digit;
    
-	//get the triangular root of "iteration"
-	triRoot = (sqrt(8 * iteration + 1.0) - 1.0) / 2.0;
-	
-	//used for finding the number of layers descended
-	rev2Pow = (int)((float)log(triRoot) / (float)log(2));
-	
-	//used for finding the layer combination increment and count
-	revRev2PowInt = 1 << rev2Pow;
-	triNum = (revRev2PowInt * (revRev2PowInt + 1.0)) / 2.0;
-	triNumLg = ((revRev2PowInt<<1) * ((revRev2PowInt<<1) + 1.0)) / 2.0;
-	triNumSm = ((revRev2PowInt>>1) * ((revRev2PowInt>>1) + 1.0)) / 2.0;
-	
-	//find the number of layers descended
-	//find the number of layer combinations horizontally progressed
-	//find the number of layer combinations
-	if (triNum < iteration)
+   //find all combinations for all numbers within a group
+   for (i=0; i < valueArrayCnt; i++)
    {
-		pyramidLayerInc = rev2Pow+1;
-		layerCombInc = iteration - triNum - 1;
-		layerCombCnt = triNumLg - triNum;
+      digit = retBaseNthDigit(evenGroupSize, combInc, i);
+      
+      //convert the combination number into a fraction
+      valueArray[i] = 2.0 / evenGroupSize * digit - (1.0 - 1.0 / evenGroupSize);
    }
-	else
-   {
-		pyramidLayerInc = rev2Pow;
-		layerCombInc = iteration - triNumSm - 1;
-		layerCombCnt = triNum - triNumSm;
-	}
+}
+
+void retOddEvenGroupComb(int evenGroupSize, int inc, int valueArrayCnt, float *valueArray)
+{
+   int i, digit;
+   int combInc;
+   int evenGroupNum;
+   int oddGroupNum;
+   float fracNums[2];
    
-	//find the number of cells within a layer
-	layerCellCnt = 1 << pyramidLayerInc;
-	
-   layerCellCntHalf = layerCellCnt / 2.0;
-   layerCellCntFrac = 1.0 / layerCellCntHalf;
+   //make room for all combinations except numbers with same digits
+   combInc = inc / ((1 << valueArrayCnt) - 2);
    
-	//find the single group pair combination size for the pyramid layer
-	singleGroupCombSize = ((layerCellCntHalf-1) * ((layerCellCntHalf-1) + 1.0)) / 2.0;
-	
-	//find the dual group pair combination size for the pyramid layer
-	dualGroupCombSize = layerCombCnt - singleGroupCombSize;
-	
-   //find the single or dual group pair combination increment and selected pair values
-	if (layerCombInc < dualGroupCombSize)
+   //find the combination numbers between two groups
+	oddGroupNum = combInc / evenGroupSize;
+	evenGroupNum = combInc % evenGroupSize;
+   
+   //convert the odd and even combination numbers into fractions
+   fracNums[0] = 2.0 / evenGroupSize * oddGroupNum - 1.0;
+   fracNums[1] = 2.0 / evenGroupSize * evenGroupNum - (1.0 - 1.0 / evenGroupSize);
+   
+   //skip over numbers with same digits
+   inc = inc % ((1 << valueArrayCnt) - 2);
+   inc++;
+   
+   //find all possibilities both fraction numbers can be positioned 
+   for (i=0; i < valueArrayCnt; i++)
    {
-		dualGroupCombInc = layerCombInc;
-      retDualGroupPairCombination((int)layerCellCntHalf, dualGroupCombInc, &selectedPair[0]);
-		selectedPairValue[0] = layerCellCntFrac * 2 * selectedPair[0] - (1.0 - layerCellCntFrac);
-		selectedPairValue[1] = (float)(selectedPair[1]) * layerCellCntFrac * 2 - 1.0;
-	}
+      digit = retBaseNthDigit(2, inc, i);
+      valueArray[i] = fracNums[digit];
+   }
+}
+
+void generateValuesA(int valueArrayCnt, float *valueArray, int iteration)
+{
+   int binPossib;
+   float mersenneNum;
+   float dimensionMultiplier;
+   float expNum, triangleNumA, triangleNumB;
+   
+   int layer, layerCombCntSum;
+   float singGroupCombCntSum;
+   float doubGroupCombCntSum;
+   float singGroupCombCnt;
+   float doubGroupCombCnt;
+   
+   float smSingGroupCombCnt;
+   float smDoubGroupCombCnt;
+   float lgSingGroupCombCnt;
+   float lgDoubGroupCombCnt;
+   float exLgSingGroupCombCnt;
+   float exLgDoubGroupCombCnt;
+   int singGroupSize;
+   
+   //number of binary possibilities in "valueArrayCnt"
+   //3 is equal to 8... 000, 100, 010, 110, 001, 101, 011, 111
+   binPossib = pow(2, valueArrayCnt);
+   
+   //variables to help calculate layer sums and sizes relative to "valueArrayCnt"
+   mersenneNum = pow(2, valueArrayCnt-1) - 1;
+   dimensionMultiplier = mersenneNum / 3;
+   
+   //find the approximate layer the iteration is in
+   //    [] layer 1
+   //  [][][] layer 2
+   //[][][][][] layer 3...
+   layer = (int)log(iteration * 1.0 / binPossib) / log(binPossib) + 2;
+   
+   //find the sum of all possible combinations within the past layers using the approximate layer
+   singGroupCombCntSum = (pow(binPossib, layer-1) - binPossib) / (binPossib-1) + 1;
+   
+   expNum = pow(2, layer-1);
+   triangleNumA = (expNum * (expNum - 1.0)) / 2.0;
+   triangleNumB = ((expNum+1) * ((expNum+1) - 1.0)) / 2.0;
+   
+   doubGroupCombCntSum = triangleNumA * triangleNumB /
+                         (triangleNumB / (4 + 16.0 / expNum)) * dimensionMultiplier;
+   
+   layerCombCntSum = singGroupCombCntSum + doubGroupCombCntSum;
+   
+   
+   //find the exact layer the iteration is in
+   smSingGroupCombCnt = pow(binPossib, layer-2);
+   smDoubGroupCombCnt = (pow(2, layer-2) * (pow(2, layer-2) + 1.0)) / 2.0 * 4 * mersenneNum;
+   
+   lgSingGroupCombCnt = pow(binPossib, layer-1);
+   lgDoubGroupCombCnt = (pow(2, layer-1) * (pow(2, layer-1) + 1.0)) / 2.0 * 4 * mersenneNum;
+   
+   exLgSingGroupCombCnt = pow(binPossib, layer);
+   exLgDoubGroupCombCnt = (pow(2, layer) * (pow(2, layer) + 1.0)) / 2.0 * 4 * mersenneNum;
+   
+   if (iteration > layerCombCntSum - (smSingGroupCombCnt + smDoubGroupCombCnt))
+   if (iteration <= layerCombCntSum)
+   layer -= 1;
+   
+   if (iteration > layerCombCntSum + (lgSingGroupCombCnt + lgDoubGroupCombCnt))
+   if (iteration <= layerCombCntSum + (lgSingGroupCombCnt + lgDoubGroupCombCnt) + (exLgSingGroupCombCnt + exLgDoubGroupCombCnt))
+   layer += 1;
+   
+   if (iteration > layerCombCntSum + (lgSingGroupCombCnt + lgDoubGroupCombCnt) + (exLgSingGroupCombCnt + exLgDoubGroupCombCnt))
+   layer += 2;
+   
+   
+   //find the sum of all possible combinations within the past layers
+   singGroupCombCntSum = (pow(binPossib, layer-1) - binPossib) / (binPossib-1) + 1;
+   
+   expNum = pow(2, layer-1);
+   triangleNumA = (expNum * (expNum - 1.0)) / 2.0;
+   triangleNumB = ((expNum+1) * ((expNum+1) - 1.0)) / 2.0;
+   
+   doubGroupCombCntSum = triangleNumA * triangleNumB /
+                         (triangleNumB / (4 + 16.0 / expNum)) * dimensionMultiplier;
+   
+   layerCombCntSum = singGroupCombCntSum + doubGroupCombCntSum;
+   
+   
+   //find which group the iteration is in 
+   singGroupCombCnt = pow(binPossib, layer-1);
+   doubGroupCombCnt = (pow(2, layer-1) * (pow(2, layer-1) + 1.0)) / 2.0 * 4 * mersenneNum;
+   
+   singGroupSize = pow(2, layer-1);
+   
+   if (iteration <= layerCombCntSum + singGroupCombCnt)
+   retSingleGroupComb(singGroupSize, iteration-1 - layerCombCntSum, valueArrayCnt, &valueArray[0]);
    else
-   {
-		singleGroupCombInc = layerCombInc - dualGroupCombSize;
-		retSingleGroupPairCombination((int)layerCellCntHalf, singleGroupCombInc, &selectedPair[0]);
-		selectedPairValue[0] = layerCellCntFrac * 2 * selectedPair[0] - (1.0 - layerCellCntFrac);
-		selectedPairValue[1] = layerCellCntFrac * 2 * selectedPair[1] - (1.0 - layerCellCntFrac);
-	}
+   retOddEvenGroupComb(singGroupSize, iteration-1 - layerCombCntSum - singGroupCombCnt, valueArrayCnt, &valueArray[0]);
 }
 
-void retPyramidValue(int iteration, float *value)
-{
-   int rev2Pow;
-   int layerCellCnt;
-   
-   rev2Pow = (int)((float)log(iteration) / (float)log(2));
-
-	//find the number of cells within a layer
-	layerCellCnt = 1 << rev2Pow;
-	
-	//return a value between -1 and 1 starting with 0 at the top
-	//of the pyramid and becoming closer to 1 and -1 moving down
-	//example output: 0, -0.5, 0.5, -0.75, -0.25, 0.25, 0.75
-	*value = 1.0 / layerCellCnt * 2 * (iteration-layerCellCnt) - (1.0 - 1.0 / layerCellCnt);
-}
-
-void generateAlikeValues(float *topMostValueArray, float *bottomMostValueArray,
-                         int valueArrayCnt, int iteration, float *valueArray)
+void generateValuesB(int valueArrayCnt, float *valueArray, int iteration)
 {
    int i;
-   float value, valueMod, sz;
+   int firstNumCombCnt;
    
-   retPyramidValue(iteration, &value);
+   //add the top and bottom most value combination to the beginning
+   firstNumCombCnt = 1 << valueArrayCnt;
    
-   for (i=0; i < valueArrayCnt; i++)
+   if (iteration <= firstNumCombCnt)
    {
-      //change numbers going from 1 to -1 into numbers going from the "top most" to "bottom most"
-      sz = topMostValueArray[i] - bottomMostValueArray[i];
-      valueMod = (value + 1.0) / 2.0 * sz + bottomMostValueArray[i];
-      
-      valueArray[i] = valueMod; 
-   }
-}
-
-void generateBinCntValues(float *topMostValueArray, float *bottomMostValueArray,
-                          int valueArrayCnt, int iteration, float *valueArray)
-{
-   int i;
-   int binPossib;
-   float pairValue[2], pairValueMod[2];
-   float sz;
-   int binNum;
-	
-	//number of binary possibilities in the "valueArrayCnt" number
-	//3 is equal to 8... 000, 100, 010, 110, 001, 101, 011, 111 minus 000 and 111
-	binPossib = (1 << valueArrayCnt) - 2;
-   
-   retPyramidPairValueCombination((int)((iteration-1) / binPossib) + 1, &pairValue[0]);
-	
-	//find the binary possibilities
-	binNum = (iteration-1) % binPossib + 1;
-   for (i=0; i < valueArrayCnt; i++)
-   {
-      //change numbers going from 1 to -1 into numbers going from the "top most" to "bottom most"
-      sz = topMostValueArray[i] - bottomMostValueArray[i];
-      pairValueMod[0] = (pairValue[0] + 1.0) / 2.0 * sz + bottomMostValueArray[i];
-      pairValueMod[1] = (pairValue[1] + 1.0) / 2.0 * sz + bottomMostValueArray[i];
-      
-		valueArray[i] = pairValueMod[(binNum>>i)&0b1];
-	}
-}
-
-void accountBinPossibilities(int valueArrayCnt, int iteration, int *binCombInc, int *alikeCombInc)
-{
-   int binPossib;
-   int slowIteration;
-   float triRoot;
-   int rev2Pow;
-   int revRev2PowInt;
-   float triNum, triNumLg, triNumSm;
-   float triNumBin, triNumLgBin, triNumSmBin;
-   int pyramidLayerInc2;
-   int topToLastLayerCombCnt2;
-   int topToThisLayerCombCnt2;
-   int layerCombInc2, layerCombCnt2;
-   int layerCellCnt;
-   float layerCellCntHalf;
-	int topToLastLayerAlikeCnt;
-   int alikeLayerInc;
-   
-	//number of binary possibilities in the "valueArrayCnt" number
-	//3 is equal to 8... 000, 100, 010, 110, 001, 101, 011, 111 minus 000 and 111
-	binPossib = (1 << valueArrayCnt) - 2;
-   
-	//slow the iteration to account for the binary possibilities
-	slowIteration = (int)((iteration-1) / binPossib) + 1;
-	
-	//get the triangular root of "slowIteration"
-	triRoot = (sqrt(8 * slowIteration + 1.0) - 1.0) / 2.0;
-	
-	//used for finding the number of layers descended
-	rev2Pow = (int)((float)log(triRoot) / (float)log(2));
-	
-   
-	//used for finding the layer combination increment and count
-	revRev2PowInt = 1 << rev2Pow;
-	triNum = (revRev2PowInt * (revRev2PowInt + 1.0)) / 2.0;
-	triNumLg = ((revRev2PowInt<<1) * ((revRev2PowInt<<1) + 1.0)) / 2.0;
-	triNumSm = ((revRev2PowInt>>1) * ((revRev2PowInt>>1) + 1.0)) / 2.0;
-	
-	//account for binary possibilities
-	triNumBin = triNum * binPossib;
-	triNumLgBin = triNumLg * binPossib;
-	triNumSmBin = triNumSm * binPossib;
-	
-   
-	//find the number of layers descended
-	//find the number of layer combinations horizontally progressed
-	//find the number of layer combinations
-	if ((triNumBin + (revRev2PowInt-1)) < iteration)
-   {
-		pyramidLayerInc2 = rev2Pow+1;
-		topToLastLayerCombCnt2 = (triNumBin + (revRev2PowInt-1));
-		topToThisLayerCombCnt2 = (triNumLgBin + (revRev2PowInt*2-1));
-   }
-	else
-   {
-		pyramidLayerInc2 = rev2Pow;
-		topToLastLayerCombCnt2 = (triNumSmBin + ((int)(revRev2PowInt/2)-1));
-		topToThisLayerCombCnt2 = (triNumBin + (revRev2PowInt-1));
-	}
-   
-	layerCombInc2 = iteration - topToLastLayerCombCnt2 - 1;
-	layerCombCnt2 = topToThisLayerCombCnt2 - topToLastLayerCombCnt2;
-	
-   //find the number of cells within the layer
-	layerCellCnt = 1 << pyramidLayerInc2;
-   layerCellCntHalf = layerCellCnt / 2.0;
-   
-	//find the top to last layer combination count for the alike values
-	topToLastLayerAlikeCnt = layerCellCntHalf - 1;
-	
-	
-	//find the iteration number for either the "alike" values or the "binary count" values
-	if (layerCombInc2 < layerCombCnt2 - layerCellCntHalf)
-   {
-		*binCombInc = (int)(iteration - topToLastLayerAlikeCnt);
-		*alikeCombInc = 0;
-   }
-	else
-   {
-		alikeLayerInc = layerCellCntHalf - (layerCombCnt2 - layerCombInc2);
-		*alikeCombInc = topToLastLayerAlikeCnt + alikeLayerInc + 1;
-		*binCombInc = 0;
-	}
-}
-
-void generateValues(float *topMostValueArray, float *bottomMostValueArray,
-                    int valueArrayCnt, int iteration, float *valueArray)
-{
-   int i;
-   int binPossib;
-   float pairValue[2], pairValueMod[2];
-   float sz;
-   int binNum;
-   int binCombInc, alikeCombInc;
-   
-	//make the first 2 iterations equal the bottom most value and the top most value
-	if (iteration <= 2)
-   {
-		//number of binary possibilities in the "valueArrayCnt" number
-		//3 is equal to 8... 000, 100, 010, 110, 001, 101, 011, 111 minus 000 and 111
-      binPossib = (1 << valueArrayCnt) - 2;
-      
-		if (iteration == 1)
-      {
-         pairValue[0] = -1.0;
-         pairValue[1] = -1.0;
-      }
-		if (iteration == 2)
-      {
-         pairValue[0] = 1.0;
-         pairValue[1] = 1.0;
-      }
-		
-		//find the binary possibilities
-		if (binPossib)
-      binNum = (iteration-1) % binPossib + 1;
-		else
-      binNum = 0;
       for (i=0; i < valueArrayCnt; i++)
       {
-         //change numbers going from 1 to -1 into numbers going from the "top most" to "bottom most"
-         sz = topMostValueArray[i] - bottomMostValueArray[i];
-         pairValueMod[0] = (pairValue[0] + 1.0) / 2.0 * sz + bottomMostValueArray[i];
-         pairValueMod[1] = (pairValue[1] + 1.0) / 2.0 * sz + bottomMostValueArray[i];
-         
-         valueArray[i] = pairValueMod[(binNum>>i)&0b1];
+         valueArray[i] = retBaseNthDigit(2, iteration-1, i) * 2 - 1;
       }
       
       return;
    }
    
-	iteration -= 2;
-	
-	//find if the values should be alike or if they should be different and use binary possibilities
-	if (valueArrayCnt > 1)
-   {
-      accountBinPossibilities(valueArrayCnt, iteration, &binCombInc, &alikeCombInc);
-	}
-   else
-   {
-      binCombInc = 0;
-		alikeCombInc = iteration;
-	}
+   iteration -= firstNumCombCnt;
    
-	if (binCombInc)
-   generateBinCntValues(&topMostValueArray[0], &bottomMostValueArray[0],
-                        valueArrayCnt, binCombInc, &valueArray[0]);
-	
-	if (alikeCombInc)
-   generateAlikeValues(&topMostValueArray[0], &bottomMostValueArray[0],
-                       valueArrayCnt, alikeCombInc, &valueArray[0]);
+   generateValuesA(valueArrayCnt, &valueArray[0], iteration);
+}
+
+void generateValuesC(float *topMostValueArray, float *bottomMostValueArray,
+                     int valueArrayCnt, float *valueArray, int iteration)
+{
+   int i;
+   
+   generateValuesB(valueArrayCnt, &valueArray[0], iteration);
+   
+   //change numbers going from 1 to -1 into numbers going from the "top most" to "bottom most"
+   for (i=0; i < valueArrayCnt; i++)
+   {
+      //newValue = (value + 1) / 2 * size + bottomMostValue
+      valueArray[i] = (valueArray[i] + 1.0) / 2.0 *
+                      (topMostValueArray[i] - bottomMostValueArray[i]) + bottomMostValueArray[i];
+   }
 }
