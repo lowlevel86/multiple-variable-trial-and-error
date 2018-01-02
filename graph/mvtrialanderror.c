@@ -5,7 +5,7 @@
 
 //guessValues() guesses and finds values based on input
 
-//generateValues() can generate multiple values within a range without hitting the same value combination twice, it can also start where it left off without having to start from the first iteration
+//generateValues() given an input number can generate multiple values within ranges without hitting the same value combination twice, it can also start anywhere with about the same amount of computation
 
 #include <stdio.h>
 #include <math.h>
