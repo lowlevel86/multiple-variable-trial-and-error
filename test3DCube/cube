@@ -1,1 +1,0 @@
-wine /home/coder/c_programming/windows/tccAndTools/tcc/tcc mvtrialanderror.c -run cube.c
