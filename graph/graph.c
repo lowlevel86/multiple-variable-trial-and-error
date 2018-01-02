@@ -19,8 +19,8 @@
 //gnuplot graph.gnu
 
 
-void yCutsLine(float x1Line, float x2Line, float y1Line, float y2Line,
-               int cutCnt, float *xCutLocs, float *yCutLocsRet)
+void yCutsLine(double x1Line, double x2Line, double y1Line, double y2Line,
+               int cutCnt, double *xCutLocs, double *yCutLocsRet)
 {
    int i;
    
@@ -30,10 +30,10 @@ void yCutsLine(float x1Line, float x2Line, float y1Line, float y2Line,
 	}
 }
 
-float maxValueInArray(float *valueArray, int valueArrayCnt)
+double maxValueInArray(double *valueArray, int valueArrayCnt)
 {
    int i;
-   float retValue;
+   double retValue;
    
    retValue = valueArray[0];
    
@@ -46,10 +46,10 @@ float maxValueInArray(float *valueArray, int valueArrayCnt)
    return retValue;
 }
 
-float minValueInArray(float *valueArray, int valueArrayCnt)
+double minValueInArray(double *valueArray, int valueArrayCnt)
 {
    int i;
-   float retValue;
+   double retValue;
    
    retValue = valueArray[0];
    
@@ -64,33 +64,33 @@ float minValueInArray(float *valueArray, int valueArrayCnt)
 
 int main()
 {
-   int i;
-   float xPoints[] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
-   float yPoints[] = {749.0, 614.0, 518.0, 412.0, 398.0, 347.0, 291.0, 238.0, 338.0};
-   int pointCnt = sizeof(xPoints)/sizeof(float);
-   float *xCutPts = xPoints;
-   float yCutPtsRet[sizeof(xPoints)/sizeof(float)];
-   float xPointMax;
-   float xPointMin;
-   float topMostValue;
-   float bottomMostValue;
+   unsigned int i;
+   double xPoints[] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+   double yPoints[] = {749.0, 614.0, 518.0, 412.0, 398.0, 347.0, 291.0, 238.0, 338.0};
+   int pointCnt = sizeof(xPoints)/sizeof(double);
+   double *xCutPts = xPoints;
+   double yCutPtsRet[sizeof(xPoints)/sizeof(double)];
+   double xPointMax;
+   double xPointMin;
+   double topMostValue;
+   double bottomMostValue;
    
-   float topMostValueArray[2];
-   float bottomMostValueArray[2];
-   float middleValueArray[2];
+   double topMostValueArray[2];
+   double bottomMostValueArray[2];
+   double middleValueArray[2];
    
    int lineValueArrayCnt = 2;
-   float lineBaseValueArray[2];
-   float linePossibValueArray[2];
-   float lineValueArray[2];
+   double lineBaseValueArray[2];
+   double linePossibValueArray[2];
+   double lineValueArray[2];
    
-   float lastValues[sizeof(xPoints)/sizeof(float)];
-   float closestValues[sizeof(xPoints)/sizeof(float)];
-   float tolerance = 0.001;
+   double lastValues[sizeof(xPoints)/sizeof(double)];
+   double closestValues[sizeof(xPoints)/sizeof(double)];
+   double tolerance = 0.001;
    int rubberBandValues = TRUE;
-   int valueIsCloserArray[sizeof(xPoints)/sizeof(float)];
-   int valueIsMostClosestArray[sizeof(xPoints)/sizeof(float)];
-   float valueToTargetSum;
+   int valueIsCloserArray[sizeof(xPoints)/sizeof(double)];
+   int valueIsMostClosestArray[sizeof(xPoints)/sizeof(double)];
+   double valueToTargetSum;
    
    FILE *ptDataFilePtr;
    FILE *lineDataFilePtr;

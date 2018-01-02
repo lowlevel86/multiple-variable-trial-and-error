@@ -5,33 +5,33 @@
 #define FALSE 0
 
 //compile for windows:
-//tcc -mwindows -o graph3d.exe graph3d.c mvtrialanderror.c
+//tcc -mwindows -o graph3D.exe graph3D.c mvtrialanderror.c
 
 //compile for linux:
-//tcc -lm -o graph3d mvtrialanderror.c graph3d.c
+//tcc -lm -o graph3D mvtrialanderror.c graph3D.c
 
 //execute directly with:
-//tcc mvtrialanderror.c -run graph3d.c
+//tcc mvtrialanderror.c -run graph3D.c
 
 //view graph:
-//gnuplot -p graph3dWxt.gnu
+//gnuplot -p graph3DWxt.gnu
 
 //draw graph to png:
-//gnuplot graph3d.gnu
+//gnuplot graph3D.gnu
 
 
-void zPokesTrigon(float xT1, float yT1, float zT1,
-                  float xT2, float yT2, float zT2,
-                  float xT3, float yT3, float zT3,
-                  int pokeCnt, float *xPokeLocs, float *yPokeLocs, float *zPokeLocsRet)
+void zPokesTrigon(double xT1, double yT1, double zT1,
+                  double xT2, double yT2, double zT2,
+                  double xT3, double yT3, double zT3,
+                  int pokeCnt, double *xPokeLocs, double *yPokeLocs, double *zPokeLocsRet)
 {
    int i;
-   float xE4, yE4, zE4;
-   float xQ1toQ2, zQ1toQ2;
-   float xQ2toQ3, zQ2toQ3;
-   float xQ3toQ4, zQ3toQ4;
-   float xQ4toQ1, zQ4toQ1;
-   float zPokeLoc1, zPokeLoc2;
+   double xE4, yE4, zE4;
+   double xQ1toQ2, zQ1toQ2;
+   double xQ2toQ3, zQ2toQ3;
+   double xQ3toQ4, zQ3toQ4;
+   double xQ4toQ1, zQ4toQ1;
+   double zPokeLoc1, zPokeLoc2;
    
    //add extra point to convert the trigon into a quad
    xE4 = xT1 - xT2 + xT3;
@@ -67,13 +67,13 @@ void zPokesTrigon(float xT1, float yT1, float zT1,
 
 
 // rotate using degrees
-void degRot(float *horiP, float *vertP, float degrees)
+void degRot(double *horiP, double *vertP, double degrees)
 {
-   float h, v;
-   float hUc;
-   float vUc;
-   float hLine1, vLine1;
-   float hLine2, vLine2;
+   double h, v;
+   double hUc;
+   double vUc;
+   double hLine1, vLine1;
+   double hLine2, vLine2;
    
    if (degrees != degrees) // check if NaN
    return;
@@ -93,10 +93,10 @@ void degRot(float *horiP, float *vertP, float degrees)
 }
 
 
-float maxValueInArray(float *valueArray, int valueArrayCnt)
+double maxValueInArray(double *valueArray, int valueArrayCnt)
 {
    int i;
-   float retValue;
+   double retValue;
    
    retValue = valueArray[0];
    
@@ -110,10 +110,10 @@ float maxValueInArray(float *valueArray, int valueArrayCnt)
 }
 
 
-float minValueInArray(float *valueArray, int valueArrayCnt)
+double minValueInArray(double *valueArray, int valueArrayCnt)
 {
    int i;
-   float retValue;
+   double retValue;
    
    retValue = valueArray[0];
    
@@ -129,42 +129,42 @@ float minValueInArray(float *valueArray, int valueArrayCnt)
 
 int main()
 {
-   int i;
-   float xPoints[] = {-1.53, 10.41, -7.34, 4.55, -2.60, 2.80, 5.71, -4.74, -4.85, -0.42};
-   float yPoints[] = {9.70, -7.52, -11.88, -8.25, -10.68, 4.27, -1.47, 1.92, -4.65, -3.56};
-   float zPoints[] = {-1.86, 5.91, -2.18, 2.69, 0.83, 1.77, 2.53, -1.33, -1.92, -0.09};
-   int pointCnt = sizeof(xPoints)/sizeof(float);
-   float *xPokePts = xPoints;
-   float *yPokePts = yPoints;
-   float zPokePtsRet[sizeof(xPoints)/sizeof(float)];
-   float xPointMax, xPointMin;
-   float yPointMax, yPointMin;
-   float zPointMax, zPointMin;
-   float xCenter, yCenter, zCenter;
+   unsigned int i;
+   double xPoints[] = {-1.53, 10.41, -7.34, 4.55, -2.60, 2.80, 5.71, -4.74, -4.85, -0.42};
+   double yPoints[] = {9.70, -7.52, -11.88, -8.25, -10.68, 4.27, -1.47, 1.92, -4.65, -3.56};
+   double zPoints[] = {-1.86, 5.91, -2.18, 2.69, 0.83, 1.77, 2.53, -1.33, -1.92, -0.09};
+   int pointCnt = sizeof(xPoints)/sizeof(double);
+   double *xPokePts = xPoints;
+   double *yPokePts = yPoints;
+   double zPokePtsRet[sizeof(xPoints)/sizeof(double)];
+   double xPointMax, xPointMin;
+   double yPointMax, yPointMin;
+   double zPointMax, zPointMin;
+   double xCenter, yCenter, zCenter;
    
-   float triangleSz;
-   float xT1, yT1, zT1;
-   float xT2, yT2, zT2;
-   float xT3, yT3, zT3;
-   float xT1Chg, yT1Chg, zT1Chg;
-   float xT2Chg, yT2Chg, zT2Chg;
-   float xT3Chg, yT3Chg, zT3Chg;
+   double triangleSz;
+   double xT1, yT1, zT1;
+   double xT2, yT2, zT2;
+   double xT3, yT3, zT3;
+   double xT1Chg, yT1Chg, zT1Chg;
+   double xT2Chg, yT2Chg, zT2Chg;
+   double xT3Chg, yT3Chg, zT3Chg;
    
-   float topMostValueArray[3];
-   float bottomMostValueArray[3];
+   double topMostValueArray[3];
+   double bottomMostValueArray[3];
    
    int valueArrayCnt = 3;
-   float zTriBaseValueArray[3];
-   float zTriPossibValueArray[3];
-   float valueArray[3];
+   double zTriBaseValueArray[3];
+   double zTriPossibValueArray[3];
+   double valueArray[3];
    
-   float lastValues[sizeof(xPoints)/sizeof(float)];
-   float closestValues[sizeof(xPoints)/sizeof(float)];
-   float tolerance = 0.001;
+   double lastValues[sizeof(xPoints)/sizeof(double)];
+   double closestValues[sizeof(xPoints)/sizeof(double)];
+   double tolerance = 0.001;
    int rubberBandValues = TRUE;
-   int valueIsCloserArray[sizeof(xPoints)/sizeof(float)];
-   int valueIsMostClosestArray[sizeof(xPoints)/sizeof(float)];
-   float valueToTargetSum;
+   int valueIsCloserArray[sizeof(xPoints)/sizeof(double)];
+   int valueIsMostClosestArray[sizeof(xPoints)/sizeof(double)];
+   double valueToTargetSum;
    
    FILE *ptDataFilePtr;
    FILE *lineDataFilePtr;
@@ -203,7 +203,7 @@ int main()
    yCenter = (yPointMax - yPointMin) / 2 + yPointMin;
    zCenter = (zPointMax - zPointMin) / 2 + zPointMin;
    
-   //create a triangle with 120 degree angles in the center of the points
+   //create a triangle with 120 degree angles at the center of the points
    if (fabs(xPointMax-xCenter) > fabs(yPointMax-yCenter))
    triangleSz = fabs(xPointMax-xCenter);
    else

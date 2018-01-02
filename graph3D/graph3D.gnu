@@ -1,4 +1,4 @@
-set terminal pngcairo size 800,600; set output "graph3d.png"
+set terminal pngcairo size 800,600; set output "graph3D.png"
 
 #set title "Graph Title"
 #set xlabel "X"
