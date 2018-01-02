@@ -32,30 +32,30 @@ void closerFurther(double *valueArray, double *targetArray, double *lastValues, 
 {
    int i;
    
-	*valueToTargetSum = 0.0;
+   *valueToTargetSum = 0.0;
    
    for (i=0; i < valueArrayCnt; i++)
    {
       //rubberBandValues = the further a value is the more weight it has
-		if (rubberBandValues)
+      if (rubberBandValues)
       *valueToTargetSum += pow(fabs(targetArray[i] - valueArray[i]), 2);
-		else
+      else
       *valueToTargetSum += fabs(targetArray[i] - valueArray[i]);
-		
+      
       if ((valueArray[i]+tolerance >= targetArray[i]) && (valueArray[i]-tolerance <= targetArray[i]))
       {
-			valueIsCloserArray[i] = NEITHER;
-			closestValues[i] = valueArray[i];
-			valueIsMostClosestArray[i] = NEITHER;
+         valueIsCloserArray[i] = NEITHER;
+         closestValues[i] = valueArray[i];
+         valueIsMostClosestArray[i] = NEITHER;
       }
-		else
+      else
       {
-			if (fabs(targetArray[i]-valueArray[i]) < fabs(targetArray[i]-lastValues[i]))
+         if (fabs(targetArray[i]-valueArray[i]) < fabs(targetArray[i]-lastValues[i]))
          valueIsCloserArray[i] = TRUE;
-			else
+         else
          valueIsCloserArray[i] = FALSE;
-		
-			if (fabs(targetArray[i]-valueArray[i]) < fabs(targetArray[i]-closestValues[i]))
+      
+         if (fabs(targetArray[i]-valueArray[i]) < fabs(targetArray[i]-closestValues[i]))
          {
             closestValues[i] = valueArray[i];
             valueIsMostClosestArray[i] = TRUE;
@@ -64,9 +64,9 @@ void closerFurther(double *valueArray, double *targetArray, double *lastValues, 
          {
             valueIsMostClosestArray[i] = FALSE;
          }
-		}
+      }
       
-		lastValues[i] = valueArray[i];
+      lastValues[i] = valueArray[i];
    }
 }
 
@@ -97,54 +97,54 @@ void guessValues(double *topMostValueArray, double *bottomMostValueArray,
 {
    int64_t i;
    int64_t highLowCombCnt, highLowCombInc;
-	int64_t combCnt, combInc;
-	int64_t combIteration;
-	int64_t guessHighLow;
+   int64_t combCnt, combInc;
+   int64_t combIteration;
+   int64_t guessHighLow;
    double valueFrac;
    
-	//keep the set of values with the smallest toll
+   //keep the set of values with the smallest toll
    if (lastCombToll < keepMinCombToll)
-	{
+   {
       keepMinCombToll = lastCombToll;
       for (i=0; i < valueArrayCnt; i++)
       {
          possibValueArray[i] = valueArray[i];
       }
-	}
+   }
    
-	//timing variables
-	highLowCombCnt = pow(2, valueArrayCnt) - 1;
-	highLowCombInc = (iteration-2) % highLowCombCnt;
-	combCnt = highLowCombCnt * 2;
-	combInc = (iteration-2) % combCnt;
-	combIteration = (int64_t)((iteration-2) / combCnt);
-	guessHighLow = (int64_t)(combInc / highLowCombCnt) % 2;
-	
-	//save the new base value
-	if (highLowCombInc == 0)
+   //timing variables
+   highLowCombCnt = pow(2, valueArrayCnt) - 1;
+   highLowCombInc = (iteration-2) % highLowCombCnt;
+   combCnt = highLowCombCnt * 2;
+   combInc = (iteration-2) % combCnt;
+   combIteration = (int64_t)((iteration-2) / combCnt);
+   guessHighLow = (int64_t)(combInc / highLowCombCnt) % 2;
+   
+   //save the new base value
+   if (highLowCombInc == 0)
    for (i=0; i < valueArrayCnt; i++)
    {
       baseValueArray[i] = possibValueArray[i];
-	}
+   }
    
-	//add or subtract away a fraction to the chosen values using an incrementing binary combination
-	for (i=0; i < valueArrayCnt; i++)
+   //add or subtract away a fraction to the chosen values using an incrementing binary combination
+   for (i=0; i < valueArrayCnt; i++)
    {
       //find a fraction to add to the value
       valueFrac = (topMostValueArray[i] - bottomMostValueArray[i]) / (double)(2<<combIteration);
       
-		if (((highLowCombInc+1)>>i)&0b1)
+      if (((highLowCombInc+1)>>i)&0b1)
       {
-			if (guessHighLow)
+         if (guessHighLow)
          valueArray[i] = baseValueArray[i] + valueFrac;
-			else
+         else
          valueArray[i] = baseValueArray[i] - valueFrac;
       }
       else
       {
          valueArray[i] = baseValueArray[i];
       }
-	}
+   }
 }
 
 int64_t retMagnitudeAreaOffset(int dimensions, int layer, int64_t magnitudeAreaSz, int64_t inc)
