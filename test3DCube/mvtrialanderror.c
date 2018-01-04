@@ -14,6 +14,13 @@
 #define FALSE 0
 #define NEITHER -1
 
+
+int64_t intPow(int64_t a, int64_t b)
+{    
+   return floor(pow(a, b) + 0.5);//round
+}
+
+
 void iniCloserFurther(double *lastValues, double *closestValues, int valueArrayCnt)
 {
    int i;
@@ -25,9 +32,9 @@ void iniCloserFurther(double *lastValues, double *closestValues, int valueArrayC
    }
 }
 
-//this function is a swiss army knife for finding if an array of values are closer to their target values
+//for finding if an array of values are closer to their target values
 void closerFurther(double *valueArray, double *targetArray, double *lastValues, double *closestValues,
-                   int valueArrayCnt, double tolerance, int rubberBandValues,
+                   int valueArrayCnt, double tolerance,
                    int *valueIsCloserArray, int *valueIsMostClosestArray, double *valueToTargetSum)
 {
    int i;
@@ -36,10 +43,6 @@ void closerFurther(double *valueArray, double *targetArray, double *lastValues, 
    
    for (i=0; i < valueArrayCnt; i++)
    {
-      //rubberBandValues = the further a value is the more weight it has
-      if (rubberBandValues)
-      *valueToTargetSum += pow(fabs(targetArray[i] - valueArray[i]), 2);
-      else
       *valueToTargetSum += fabs(targetArray[i] - valueArray[i]);
       
       if ((valueArray[i]+tolerance >= targetArray[i]) && (valueArray[i]-tolerance <= targetArray[i]))
@@ -113,7 +116,7 @@ void guessValues(double *topMostValueArray, double *bottomMostValueArray,
    }
    
    //timing variables
-   highLowCombCnt = pow(2, valueArrayCnt) - 1;
+   highLowCombCnt = intPow(2, valueArrayCnt) - 1;
    highLowCombInc = (iteration-2) % highLowCombCnt;
    combCnt = highLowCombCnt * 2;
    combInc = (iteration-2) % combCnt;
@@ -199,16 +202,16 @@ int64_t retMagnitudeAreaOffset(int dimensions, int layer, int64_t magnitudeAreaS
    */
    
    //initialize
-   powOfTwoLayer = pow(2, layer);
+   powOfTwoLayer = intPow(2, layer);
    smEvenNum = powOfTwoLayer / 2;
    smOddNum = smEvenNum + 1;
    
-   skipCntFrac = pow(smOddNum, dimensions-1) / smOddNum;
+   skipCntFrac = intPow(smOddNum, dimensions-1) / smOddNum;
    
    offsetGain = 0;
    variedInc = inc;
    
-   magnitudeNum = pow(powOfTwoLayer+1, dimensions-2);
+   magnitudeNum = intPow(powOfTwoLayer+1, dimensions-2);
    magnitudeFrac = (magnitudeAreaSz + magnitudeNum) / smOddNum;
    
    //find the increment offset
@@ -285,10 +288,10 @@ int64_t retTurbulentAreaOffset(int dimensions, int layer, int64_t turbulentAreaS
    */
    
    //initialize
-   powOfTwoLayer = pow(2, layer);
+   powOfTwoLayer = intPow(2, layer);
    smEvenNum = powOfTwoLayer / 2;
    
-   skipCntFrac = pow(smEvenNum, dimensions-1) / smEvenNum;
+   skipCntFrac = intPow(smEvenNum, dimensions-1) / smEvenNum;
    
    offsetGain = 0;
    
@@ -297,7 +300,7 @@ int64_t retTurbulentAreaOffset(int dimensions, int layer, int64_t turbulentAreaS
    else
       return inc;
    
-   magnitudeNum = pow(powOfTwoLayer+1, dimensions-2);
+   magnitudeNum = intPow(powOfTwoLayer+1, dimensions-2);
    turbulentNum = turbulentEndNum + (turbulentEndNum - magnitudeNum);
    turbulentFrac = (turbulentAreaSz - turbulentEndNum*2 + turbulentNum) / smEvenNum;
    
@@ -454,11 +457,11 @@ void retAreaSzsAndOffset(int dimensions, int layer,
    */
    
    //initialize
-   powOfTwoLayer = pow(2, layer);
+   powOfTwoLayer = intPow(2, layer);
    smEvenNum = powOfTwoLayer / 2;
    smOddNum = smEvenNum + 1;
-   powOfSmEvenNum = pow(smEvenNum, dimensions-2);
-   powOfSmOddNum = pow(smOddNum, dimensions-2);
+   powOfSmEvenNum = intPow(smEvenNum, dimensions-2);
+   powOfSmOddNum = intPow(smOddNum, dimensions-2);
    
    magnitudeNum = powOfTwoLayer+1;
    magnitudeNumSum = 0;
@@ -527,7 +530,7 @@ int64_t retBaseNthDigit(int64_t base, int64_t num, int64_t digitLoc)
    double placeValue1;
    double placeValue2;
    
-   placeValue1 = pow(base, digitLoc);
+   placeValue1 = intPow(base, digitLoc);
    placeValue2 = placeValue1 * base;
    
    //use integer division to remove smaller digits
@@ -545,7 +548,7 @@ void retSingleGroupComb(int dimensions, int layer, int64_t inc, double *valueArr
    int64_t digit;
    int64_t groupSize;
    
-   groupSize = pow(2, layer-1);
+   groupSize = intPow(2, layer-1);
    
    //find all combinations within the group
    for (i=0; i < dimensions; i++)
@@ -564,7 +567,7 @@ void retOddEvenGroupComb(int dimensions, int layer, int64_t inc, double *valueAr
    int64_t skipInc;
    int64_t oddSideGroupSize;
    
-   oddSideGroupSize = pow(2, layer)+1;
+   oddSideGroupSize = intPow(2, layer)+1;
    
    //find all combinations for both the odd group and the even group
    
@@ -590,13 +593,13 @@ int64_t getLayerValuesCnt(int dimensions, int layer)
    int64_t areaSzOffset;
    
    if (layer == 0)
-   return pow(2, dimensions);//top and bottom most value combination count
+   return intPow(2, dimensions);//top and bottom most value combination count
    
    retAreaSzsAndOffset(dimensions, layer,
                        &magnitudeAreaSz, &turbulentAreaSz, &turbulentEndNum, &areaSzOffset);
    
-   singGroupCombCnt = pow(pow(2, dimensions), layer-1);
-   turbulentAreaCnt = pow(2, layer-1);
+   singGroupCombCnt = intPow(intPow(2, dimensions), layer-1);
+   turbulentAreaCnt = intPow(2, layer-1);
    doubGroupCombCnt = magnitudeAreaSz*(turbulentAreaCnt+1) + turbulentAreaSz*turbulentAreaCnt;
    
    return singGroupCombCnt + doubGroupCombCnt;
@@ -618,8 +621,8 @@ void generateValuesA(int valueArrayCnt, uint32_t inc, double *valueArray)
       retAreaSzsAndOffset(valueArrayCnt, layer,
                           &magnitudeAreaSz, &turbulentAreaSz, &turbulentEndNum, &areaSzOffset);
       
-      singGroupCombCnt = pow(pow(2, valueArrayCnt), layer-1);
-      turbulentAreaCnt = pow(2, layer-1);
+      singGroupCombCnt = intPow(intPow(2, valueArrayCnt), layer-1);
+      turbulentAreaCnt = intPow(2, layer-1);
       doubGroupCombCnt = magnitudeAreaSz*(turbulentAreaCnt+1) + turbulentAreaSz*turbulentAreaCnt;
       
       if (inc < singGroupCombCnt+doubGroupCombCnt)
@@ -641,7 +644,7 @@ void generateValuesB(int valueArrayCnt, uint32_t inc, double *valueArray)
    int64_t firstNumCombCnt;
    
    //add the top and bottom most value combination to the beginning
-   firstNumCombCnt = pow(2, valueArrayCnt);
+   firstNumCombCnt = intPow(2, valueArrayCnt);
    
    if (inc < firstNumCombCnt)
    {

@@ -57,10 +57,10 @@ void zPokesTrigon(double xT1, double yT1, double zT1,
       zPokeLoc1 = zQ1toQ2 - (xQ1toQ2 - xPokeLocs[i]) / (xQ3toQ4 - xQ1toQ2) * (zQ3toQ4 - zQ1toQ2);
       zPokeLoc2 = zQ2toQ3 - (xQ2toQ3 - xPokeLocs[i]) / (xQ4toQ1 - xQ2toQ3) * (zQ4toQ1 - zQ2toQ3);
       
-      if (isnormal(zPokeLoc1))
+      if (zPokeLoc1 == zPokeLoc1)// is not NaN
       zPokeLocsRet[i] = zPokeLoc1;
       
-      if (isnormal(zPokeLoc2))
+      if (zPokeLoc2 == zPokeLoc2)// is not NaN
       zPokeLocsRet[i] = zPokeLoc2;
 	}
 }
@@ -161,7 +161,6 @@ int main()
    double lastValues[sizeof(xPoints)/sizeof(double)];
    double closestValues[sizeof(xPoints)/sizeof(double)];
    double tolerance = 0.001;
-   int rubberBandValues = TRUE;
    int valueIsCloserArray[sizeof(xPoints)/sizeof(double)];
    int valueIsMostClosestArray[sizeof(xPoints)/sizeof(double)];
    double valueToTargetSum;
@@ -255,7 +254,7 @@ int main()
                    pointCnt, &xPokePts[0], &yPokePts[0], &zPokePtsRet[0]);
       
       closerFurther(&zPokePtsRet[0], &zPoints[0], &lastValues[0], &closestValues[0],
-                    pointCnt, tolerance, rubberBandValues,
+                    pointCnt, tolerance,
                     &valueIsCloserArray[0], &valueIsMostClosestArray[0], &valueToTargetSum);
       
       printf("valueToTargetSum: %f\n", valueToTargetSum);

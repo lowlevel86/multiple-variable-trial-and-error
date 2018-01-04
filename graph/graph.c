@@ -87,7 +87,6 @@ int main()
    double lastValues[sizeof(xPoints)/sizeof(double)];
    double closestValues[sizeof(xPoints)/sizeof(double)];
    double tolerance = 0.001;
-   int rubberBandValues = TRUE;
    int valueIsCloserArray[sizeof(xPoints)/sizeof(double)];
    int valueIsMostClosestArray[sizeof(xPoints)/sizeof(double)];
    double valueToTargetSum;
@@ -140,7 +139,7 @@ int main()
                 pointCnt, &xCutPts[0], &yCutPtsRet[0]);
       
       closerFurther(&yCutPtsRet[0], &yPoints[0], &lastValues[0], &closestValues[0],
-                    pointCnt, tolerance, rubberBandValues,
+                    pointCnt, tolerance,
                     &valueIsCloserArray[0], &valueIsMostClosestArray[0], &valueToTargetSum);
       
       printf("valueToTargetSum: %f\n", valueToTargetSum);

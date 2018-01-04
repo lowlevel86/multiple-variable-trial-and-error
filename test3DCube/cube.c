@@ -152,7 +152,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-   #define POINTCNTSIZE 729
    unsigned int i;
    static HDC hdc;
    static PAINTSTRUCT ps;
@@ -164,9 +163,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
    static double valueArray[3];
    
    static unsigned int pointCntBgn = 0;
+   static unsigned int underflow = 0;
    static float pointCntBgnIncDec = 1;
-   static unsigned int pointCntSz = POINTCNTSIZE;
-   static unsigned int pointCntEnd = POINTCNTSIZE;
+   static unsigned int pointCntSz = 729;
    
    static float rotateCube = 0;
    static int zDistance = 0;
@@ -227,7 +226,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
       clearCanvas();
       
       //draw generated values to screen as 3D point locations
-      for (i=pointCntBgn; i < pointCntEnd; i++)
+      for (i=pointCntBgn+underflow; i < pointCntBgn + pointCntSz; i++)
       {
          generateValuesC(&topMostArray[0], &bottomMostArray[0], 3, i, &valueArray[0]);
          
@@ -340,14 +339,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
       if (pointCntBgnIncDec < 0x00FFFFFF)
       pointCntBgnIncDec *= 1.1;
       
-      //if the point count end location overflows past the 32 bit integer
-      if (pointCntBgn > 0xFFFFFFFF - pointCntSz)//overflow check
-      pointCntEnd = 0xFFFFFFFF;
+      //account underflow
+      if (pointCntBgn > pointCntBgn + pointCntSz)
+      underflow = 0xFFFFFFFF - pointCntBgn + 1;
       else
-      pointCntEnd = pointCntBgn + pointCntSz;
+      underflow = 0;
       
       //display the starting and ending point count locations
-      sprintf(winTextBuff, "%u - %u [Enter] Normalize", pointCntBgn, pointCntEnd);
+      if (underflow)
+      sprintf(winTextBuff, "Underflow %u - %u [Enter] Normalize", pointCntBgn+underflow, pointCntBgn + pointCntSz);
+      else
+      sprintf(winTextBuff, "%u - %u [Enter] Normalize", pointCntBgn, pointCntBgn + pointCntSz);
       SetWindowText(hwnd, TEXT(winTextBuff));
       
       

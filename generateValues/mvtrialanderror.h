@@ -3,7 +3,7 @@
 void iniCloserFurther(double *, double *, int);
 
 void closerFurther(double *, double *, double *, double *,
-                   int, double, int,
+                   int, double,
                    int *, int *, double *);
 
 void iniGuessValues(double *, double *, int, double *, double *, double *);
