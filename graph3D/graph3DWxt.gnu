@@ -3,7 +3,7 @@ set terminal wxt size 500,400
 #set title "Graph Title"
 #set xlabel "X"
 #set ylabel "Y"
-#set ylabel "Z"
+#set zlabel "Z"
 
 # sets background color
 set object 1 rectangle from screen -0.1,-0.1 to screen 1.1,1.1 fillcolor rgb "#ffffff" behind
@@ -36,6 +36,9 @@ set key outside vertical bottom right
 # hides the key
 set key off
 
+set size 1.5,1.5
+set origin -0.25,-0.32
+
 splot\
-"line.dat" title "line" with lines linewidth 0.1 linecolor rgb "black",\
+"line.dat" title "line" with lines linewidth 0.1 linecolor rgb "#404040",\
 "point.dat" title "point" with points pointsize 0.6 pointtype 7 linecolor rgb "black"

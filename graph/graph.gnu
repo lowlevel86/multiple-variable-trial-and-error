@@ -1,4 +1,4 @@
-set terminal pngcairo size 540,400; set output "graph.png"
+set terminal pngcairo transparent enhanced font "arial,10" fontscale 1.0 size 500,400; set output "graph.png"
 
 #set title "Graph Title"
 #set xlabel "X"
