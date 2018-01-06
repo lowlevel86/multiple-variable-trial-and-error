@@ -24,11 +24,11 @@ int main(int argc, char **argv)
    if (argc < 4)
    {
       printf("usage:\n");
-      printf("genValues [dimensions] [iteration start] [iteration end] optional:[min] [max] [min] [max]...\n\n");
+      printf("generateValues [dimensions] [iteration start] [iteration end] optional:[min] [max] [min] [max]...\n\n");
       printf("example 1:\n");
-      printf("genValues 2 0 100\n\n");
+      printf("generateValues 2 0 100\n\n");
       printf("example 2:\n");
-      printf("genValues 3 8 100 -10 10 0 10 0 360\n\n");
+      printf("generateValues 3 8 100 -10 10 0 10 0 360\n\n");
       
       return 0;
    }
@@ -59,8 +59,8 @@ int main(int argc, char **argv)
    
    for (i=iBgn; i < iEnd; i++)
    {
-      generateValuesC(&topMostValueArray[0], &bottomMostValueArray[0],
-                      valueArrayCnt, i, &valueArray[0]);
+      generateRangedValues(&topMostValueArray[0], &bottomMostValueArray[0],
+                           valueArrayCnt, i, &valueArray[0]);
       
       for (j=0; j < valueArrayCnt; j++)
       {
@@ -69,8 +69,8 @@ int main(int argc, char **argv)
       printf("\n");
    }
    
-   generateValuesC(&topMostValueArray[0], &bottomMostValueArray[0],
-                   valueArrayCnt, iEnd, &valueArray[0]);
+   generateRangedValues(&topMostValueArray[0], &bottomMostValueArray[0],
+                        valueArrayCnt, iEnd, &valueArray[0]);
    
    for (j=0; j < valueArrayCnt; j++)
    {

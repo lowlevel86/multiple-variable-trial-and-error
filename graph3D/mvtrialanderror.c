@@ -583,70 +583,25 @@ void retOddEvenGroupComb(int dimensions, int layer, int64_t inc, double *valueAr
    }
 }
 
-int64_t getLayerValuesCnt(int dimensions, int layer)
+int64_t sumCurrentAndPriorLayers(int dimensions, int layer)
 {
-   int64_t singGroupCombCnt;
-   int64_t turbulentAreaCnt;
-   int64_t doubGroupCombCnt;
-   int64_t magnitudeAreaSz, turbulentAreaSz;
-   int64_t turbulentEndNum;
-   int64_t areaSzOffset;
-   
-   if (layer == 0)
-   return intPow(2, dimensions);//top and bottom most value combination count
-   
-   retAreaSzsAndOffset(dimensions, layer,
-                       &magnitudeAreaSz, &turbulentAreaSz, &turbulentEndNum, &areaSzOffset);
-   
-   singGroupCombCnt = intPow(intPow(2, dimensions), layer-1);
-   turbulentAreaCnt = intPow(2, layer-1);
-   doubGroupCombCnt = magnitudeAreaSz*(turbulentAreaCnt+1) + turbulentAreaSz*turbulentAreaCnt;
-   
-   return singGroupCombCnt + doubGroupCombCnt;
+   return intPow(intPow(2, layer)+1, dimensions);
 }
 
-void generateValuesA(int valueArrayCnt, uint32_t inc, double *valueArray)
-{
-   int layer = 1;
-   int64_t singGroupCombCnt;
-   int64_t doubGroupCombCnt;
-   int64_t magnitudeAreaSz, turbulentAreaSz;
-   int64_t turbulentAreaCnt;
-   int64_t turbulentEndNum;
-   int64_t areaSzOffset;
-   
-   //find which layer "inc" is in
-   while (TRUE)
-   {
-      retAreaSzsAndOffset(valueArrayCnt, layer,
-                          &magnitudeAreaSz, &turbulentAreaSz, &turbulentEndNum, &areaSzOffset);
-      
-      singGroupCombCnt = intPow(intPow(2, valueArrayCnt), layer-1);
-      turbulentAreaCnt = intPow(2, layer-1);
-      doubGroupCombCnt = magnitudeAreaSz*(turbulentAreaCnt+1) + turbulentAreaSz*turbulentAreaCnt;
-      
-      if (inc < singGroupCombCnt+doubGroupCombCnt)
-      break;
-      
-      inc -= singGroupCombCnt+doubGroupCombCnt;
-      layer++;
-   }
-   
-   if (inc < singGroupCombCnt)
-   retSingleGroupComb(valueArrayCnt, layer, inc, &valueArray[0]);
-   else
-   retOddEvenGroupComb(valueArrayCnt, layer, inc-singGroupCombCnt, &valueArray[0]);
-}
-
-void generateValuesB(int valueArrayCnt, uint32_t inc, double *valueArray)
+void generateValues(int valueArrayCnt, uint32_t inc, double *valueArray)
 {
    int64_t i;
-   int64_t firstNumCombCnt;
+   int64_t firstCombCnt;
+   int layer;
+   int64_t singleGroupCombCnt;
+   int64_t layerValuesInc;
+   int64_t pastLayersSum;
    
-   //add the top and bottom most value combination to the beginning
-   firstNumCombCnt = intPow(2, valueArrayCnt);
    
-   if (inc < firstNumCombCnt)
+   //find the top and bottom most value combination
+   firstCombCnt = intPow(2, valueArrayCnt);
+   
+   if (inc < firstCombCnt)
    {
       for (i=0; i < valueArrayCnt; i++)
       {
@@ -656,17 +611,32 @@ void generateValuesB(int valueArrayCnt, uint32_t inc, double *valueArray)
       return;
    }
    
-   inc -= firstNumCombCnt;
    
-   generateValuesA(valueArrayCnt, inc, &valueArray[0]);
+   //find the layer
+   layer = log(pow(inc, 1.0/valueArrayCnt)-1) / log(2) + 1;
+   
+   //correct layer for rounding errors
+   if (intPow(intPow(2, layer)+1, valueArrayCnt) == inc)
+   layer++;
+   
+   pastLayersSum = intPow(intPow(2, layer-1)+1, valueArrayCnt);
+   
+   layerValuesInc = inc - pastLayersSum;
+   singleGroupCombCnt = intPow(firstCombCnt, layer-1);
+   
+   
+   if (layerValuesInc < singleGroupCombCnt)
+   retSingleGroupComb(valueArrayCnt, layer, layerValuesInc, &valueArray[0]);
+   else
+   retOddEvenGroupComb(valueArrayCnt, layer, layerValuesInc-singleGroupCombCnt, &valueArray[0]);
 }
 
-void generateValuesC(double *topMostValueArray, double *bottomMostValueArray,
-                     int valueArrayCnt, uint32_t inc, double *valueArray)
+void generateRangedValues(double *topMostValueArray, double *bottomMostValueArray,
+                          int valueArrayCnt, uint32_t inc, double *valueArray)
 {
    int64_t i;
    
-   generateValuesB(valueArrayCnt, inc, &valueArray[0]);
+   generateValues(valueArrayCnt, inc, &valueArray[0]);
    
    //change numbers going from 1 to -1 into numbers going from the "top most" to "bottom most"
    for (i=0; i < valueArrayCnt; i++)

@@ -190,17 +190,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
       
       SetTimer(hwnd, ID_TIMER, 50, NULL);
       
-      layerSzSum[0] = getLayerValuesCnt(3, 0);
-      layerSzSum[1] = layerSzSum[0] + getLayerValuesCnt(3, 1);
-      layerSzSum[2] = layerSzSum[1] + getLayerValuesCnt(3, 2);
-      layerSzSum[3] = layerSzSum[2] + getLayerValuesCnt(3, 3);
-      layerSzSum[4] = layerSzSum[3] + getLayerValuesCnt(3, 4);
-      layerSzSum[5] = layerSzSum[4] + getLayerValuesCnt(3, 5);
-      layerSzSum[6] = layerSzSum[5] + getLayerValuesCnt(3, 6);
-      layerSzSum[7] = layerSzSum[6] + getLayerValuesCnt(3, 7);
-      layerSzSum[8] = layerSzSum[7] + getLayerValuesCnt(3, 8);
-      layerSzSum[9] = layerSzSum[8] + getLayerValuesCnt(3, 9);
-      layerSzSum[10] = layerSzSum[9] + getLayerValuesCnt(3, 10);
+      layerSzSum[0] = sumCurrentAndPriorLayers(3, 0);
+      layerSzSum[1] = sumCurrentAndPriorLayers(3, 1);
+      layerSzSum[2] = sumCurrentAndPriorLayers(3, 2);
+      layerSzSum[3] = sumCurrentAndPriorLayers(3, 3);
+      layerSzSum[4] = sumCurrentAndPriorLayers(3, 4);
+      layerSzSum[5] = sumCurrentAndPriorLayers(3, 5);
+      layerSzSum[6] = sumCurrentAndPriorLayers(3, 6);
+      layerSzSum[7] = sumCurrentAndPriorLayers(3, 7);
+      layerSzSum[8] = sumCurrentAndPriorLayers(3, 8);
+      layerSzSum[9] = sumCurrentAndPriorLayers(3, 9);
+      layerSzSum[10] = sumCurrentAndPriorLayers(3, 10);
       
       return 0;
    }
@@ -228,7 +228,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
       //draw generated values to screen as 3D point locations
       for (i=pointCntBgn+underflow; i < pointCntBgn + pointCntSz; i++)
       {
-         generateValuesC(&topMostArray[0], &bottomMostArray[0], 3, i, &valueArray[0]);
+         generateRangedValues(&topMostArray[0], &bottomMostArray[0], 3, i, &valueArray[0]);
          
          xPt = valueArray[0];
          yPt = valueArray[1];

@@ -20,35 +20,25 @@
 int main(int argc, char **argv)
 {
    int i, dimensions, layer;
-   long long int layerSize;
-   long long int layerSizeSum;
-   long long int layerSizeSumDelta;
+   int64_t layerSize;
+   int64_t layerSizeSum;
    double valueArray[32];
    
    for (dimensions=1; dimensions <= 32; dimensions++)
    {
       printf("dimensions:%i\n", dimensions);
-      layer = 0;
-      layerSize = 0;
-      layerSizeSum = 0;
-      layerSizeSumDelta = 0;
       
-      while (1)
+      layer = 0;
+      layerSizeSum = sumCurrentAndPriorLayers(dimensions, layer);
+      layerSize = layerSizeSum - 0;
+      
+      while (layerSizeSum <= 0x100000000)//32bit overflow check
       {
-         layerSizeSum += layerSize;
-         layerSize = getLayerValuesCnt(dimensions, layer);
-         layerSizeSumDelta += layerSize;
-         
-         //32bit overflow check
-         if (layerSizeSumDelta > 0x100000000 - layerSizeSum)
-         break;
-         
-         
          printf("\n");
          printf("layer %i size:%lld\n", layer, layerSize);
-         printf("count %lld starting values:\n", layerSizeSum);
+         printf("count %lld, starting values:\n", layerSizeSum-layerSize);
          
-         generateValuesB(dimensions, layerSizeSum, &valueArray[0]);
+         generateValues(dimensions, layerSizeSum-layerSize, &valueArray[0]);
          
          for (i=0; i < dimensions; i++)
          {
@@ -57,9 +47,9 @@ int main(int argc, char **argv)
          printf("\n");
          
          
-         printf("count %lld ending values:\n", layerSizeSumDelta-1);
+         printf("count %lld, ending values:\n", layerSizeSum-1);
          
-         generateValuesB(dimensions, layerSizeSumDelta-1, &valueArray[0]);
+         generateValues(dimensions, layerSizeSum-1, &valueArray[0]);
          
          for (i=0; i < dimensions; i++)
          {
@@ -69,6 +59,8 @@ int main(int argc, char **argv)
          
          
          layer++;
+         layerSizeSum = sumCurrentAndPriorLayers(dimensions, layer);
+         layerSize = layerSizeSum - sumCurrentAndPriorLayers(dimensions, layer-1);
       }
       printf("\n\n");
    }
