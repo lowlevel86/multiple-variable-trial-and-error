@@ -9,7 +9,7 @@ These functions are demonstrated in the graph and graph3D folders.
 
 ![trial_and_error_graph](https://github.com/lowlevel86/multiple-variable-trial-and-error/blob/master/graph3D/graph3D.png "3d graph example")
 
-generateValues() - given an input number can generate multiple values within ranges without hitting the same value combination twice, it can also start anywhere with about the same amount of computation  
+generateValues() - can generate multiple values within ranges without hitting the same value combination twice, it can also start anywhere with about the same amount of computation  
 This function is demonstrated in the generateValues folder.  
 
 This graph shows an example of 3 dimensional output:  
