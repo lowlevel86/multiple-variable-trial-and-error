@@ -1,12 +1,3 @@
-//mvtrialanderror.c (multiple variable trial and error)
-//this code contains 3 main functions: closerFurther, guessValues, and generateValues
-
-//closerFurther() checks if values are closer to their targets 
-
-//guessValues() guesses and finds values based on input
-
-//generateValues() given an input number can generate multiple values within ranges without hitting the same value combination twice, it can also start anywhere with about the same amount of computation
-
 #include <stdio.h>
 #include <math.h>
 #include "mvtrialanderror.h"
